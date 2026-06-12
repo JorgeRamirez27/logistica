@@ -1,6 +1,9 @@
+import json
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import User, Group
+from django.views.decorators.csrf import csrf_exempt
 from .forms import FormularioAltaBien
 from .models import Bien, Direccion
 from .utils.security import registrar_evento_bitacora
@@ -94,13 +97,31 @@ def vista_registrar_bien(request):
 
 def vista_mis_bienes(request):
     """
-    Cascarón temporal para la pantalla de reportes del Cliente.
+    Caso de Uso: Consultar información propia (Bienes del Cliente)
     """
-    # Verificación de seguridad básica de sesión
-    if not request.user.is_authenticated:
-        return redirect('login')
+    if not request.user.is_authenticated or request.session.get('rol') != 'Cliente':
+        return render(request, 'logistica/no_autorizado.html')
         
-    return render(request, 'logistica/cliente_bienes.html')
+    # Extraer bienes asociados únicamente a este usuario
+    mis_bienes = Bien.objects.filter(usuario_id=request.user.id)
+    return render(request, 'logistica/cliente_bienes.html', {'bienes': mis_bienes})
+
+def vista_editar_perfil(request):
+    """
+    Caso de Uso: Consultar y actualizar información propia.
+    """
+    if not request.user.is_authenticated:
+        return render(request, 'logistica/no_autorizado.html')
+        
+    if request.method == 'POST':
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+        registrar_evento_bitacora(request.user.username, request.session.get('rol', 'Desconocido'), "Actualizacion de perfil", "Exitoso")
+        return redirect('mis_bienes')
+        
+    return render(request, 'logistica/perfil.html')
 
 
 def vista_dashboard_supervisor(request):
@@ -131,3 +152,35 @@ def vista_dashboard_supervisor(request):
         lineas_bitacora = ["Aviso: El archivo bitacora_seguridad.log aún no existe o no ha sido creado."]
 
     return render(request, 'logistica/supervisor_dashboard.html', {'bienes': todos_los_bienes, 'bitacora': lineas_bitacora})
+
+
+@csrf_exempt
+def api_actualizar_gps(request):
+    """
+    Simular la actualización GPS de un camión mediante un servicio web seguro.
+    """
+    if request.method == 'POST':
+        # Verificación de seguridad (Token estático manual para el ejemplo)
+        token_autorizacion = request.headers.get('Authorization')
+        if token_autorizacion != 'Bearer TOKEN_SEGURO_123':
+            registrar_evento_bitacora("Camion_Desconocido", "Sistema", "Actualizacion GPS", "Rechazado", "Intento sin token valido")
+            return JsonResponse({'error': 'No autorizado'}, status=401)
+            
+        try:
+            datos = json.loads(request.body)
+            latitud = datos.get('latitud')
+            longitud = datos.get('longitud')
+            id_camion = datos.get('id_camion')
+            
+            if not latitud or not longitud or not id_camion:
+                return JsonResponse({'error': 'Faltan parametros (latitud, longitud, id_camion)'}, status=400)
+                
+            # Registro exitoso en bitácora simulando la persistencia
+            detalle = f"Ubicacion actualizada -> Lat: {latitud}, Lon: {longitud}"
+            registrar_evento_bitacora(f"Camion_{id_camion}", "Sistema", "Actualizacion GPS", "Exitoso", detalle)
+            
+            return JsonResponse({'estatus': 'ok', 'mensaje': 'Coordenadas GPS recibidas correctamente'})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Cuerpo de la peticion no es JSON valido'}, status=400)
+            
+    return JsonResponse({'error': 'Metodo HTTP no permitido. Usa POST.'}, status=405)

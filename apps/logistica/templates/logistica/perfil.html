@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Perfil</title>
+</head>
+<body>
+    <h1>Editar Información Propia</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label>Nombre:</label>
+        <input type="text" name="first_name" value="{{ request.user.first_name }}"><br><br>
+        
+        <label>Apellidos:</label>
+        <input type="text" name="last_name" value="{{ request.user.last_name }}"><br><br>
+        
+        <label>Correo Electrónico:</label>
+        <input type="email" name="email" value="{{ request.user.email }}"><br><br>
+        
+        <button type="submit">Guardar Cambios</button>
+    </form>
+    <br>
+    <a href="{% url 'mis_bienes' %}">Cancelar y regresar</a>
+</body>
+</html>

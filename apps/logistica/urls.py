@@ -28,7 +28,10 @@ urlpatterns = [
     # Ruta para el formulario de captura del Cliente
     path('bienes/nuevo/', views.vista_registrar_bien, name='registrar_bien'),
     
-    # --- NUEVAS RUTAS TEMPORALES PARA EVITAR EL ERROR ---
     path('bienes/mis-bienes/', views.vista_mis_bienes, name='mis_bienes'),
     path('supervisor/dashboard/', views.vista_dashboard_supervisor, name='dashboard_supervisor'),
+    
+    # Nuevas rutas para cubrir todos los requisitos
+    path('perfil/editar/', views.vista_editar_perfil, name='editar_perfil'),
+    path('api/gps/', views.api_actualizar_gps, name='api_gps'),
 ]
