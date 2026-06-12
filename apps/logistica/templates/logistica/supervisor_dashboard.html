@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Supervisor - Logística</title>
+</head>
+<body>
+    <h1>Panel de Control - Supervisor</h1>
+    <p>
+        <strong>Usuario:</strong> {{ request.user.username }} | 
+        <strong>Rol:</strong> {{ request.session.rol }}
+    </p>
+    
+    <hr>
+
+    <h2>1. Listado General de Bienes Registrados</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID Bien</th>
+                <th>ID Cliente (Usuario)</th>
+                <th>Descripción</th>
+                <th>Valor Estimado</th>
+                <th>Estatus</th>
+                <th>Fecha de Registro</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bien in bienes %}
+            <tr>
+                <td>{{ bien.id }}</td>
+                <td>{{ bien.usuario_id }}</td>
+                <td>{{ bien.descripcion }}</td>
+                <td>${{ bien.valor }}</td>
+                <td>{{ bien.estatus }}</td>
+                <td>{{ bien.fecha_registro }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No se encontraron bienes registrados en el sistema.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>2. Monitor de Eventos de Seguridad (Bitácora)</h2>
+    <p><em>Mostrando las últimas 50 líneas registradas.</em></p>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Entrada de Log</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for linea in bitacora %}
+            <tr>
+                <td>{{ linea }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td>La bitácora no tiene registros para mostrar.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

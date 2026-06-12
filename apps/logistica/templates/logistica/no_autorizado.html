@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso Denegado</title>
+</head>
+<body>
+    <div style="border: 2px solid red; padding: 20px; max-width: 600px; margin: 50px auto; text-align: center;">
+        <h1 style="color: red;">Acceso Denegado</h1>
+        <p>Lo sentimos, no tienes los privilegios necesarios para acceder a esta sección.</p>
+        <p><strong>Nota de seguridad:</strong> Este intento de acceso no autorizado ha sido registrado en la bitácora del sistema.</p>
+        <br>
+        <a href="{% url 'login' %}">Regresar al inicio de sesión</a>
+    </div>
+</body>
+</html>

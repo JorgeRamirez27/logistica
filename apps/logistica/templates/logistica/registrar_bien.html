@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Logística - Registrar Nuevo Bien</title>
+</head>
+<body>
+    <h2>Captura de Bien para Transporte</h2>
+    <hr>
+
+    <form method="POST" action="{% url 'registrar_bien' %}">
+        {% csrf_token %} <h3>Datos del Bien</h3>
+        {% if form.non_field_errors %}
+            <div style="color: red;">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div>
+            <label>Descripción del artículo:</label><br>
+            {{ form.descripcion }}
+            {% if form.descripcion.errors %}
+                <span style="color: red;">{{ form.descripcion.errors }}</span>
+            {% endif %}
+        </div>
+        <br>
+        <div>
+            <label>Valor Monetario ($):</label><br>
+            {{ form.valor }}
+            {% if form.valor.errors %}
+                <span style="color: red;">{{ form.valor.errors }}</span>
+            {% endif %}
+        </div>
+
+        <h3>Dirección de Recolección (Origen)</h3>
+        <div>
+            <label>Calle y Número:</label> {{ form.rec_calle }} 
+            <label>Ciudad:</label> {{ form.rec_ciudad }}<br><br>
+            <label>Estado:</label> {{ form.rec_estado }} 
+            <label>C.P.:</label> {{ form.rec_cp }}
+        </div>
+
+        <h3>Dirección de Entrega (Destino)</h3>
+        <div>
+            <label>Calle y Número:</label> {{ form.ent_calle }} 
+            <label>Ciudad:</label> {{ form.ent_ciudad }}<br><br>
+            <label>Estado:</label> {{ form.ent_estado }} 
+            <label>C.P.:</label> {{ form.ent_cp }}
+        </div>
+        <br>
+        <button type="submit">Guardar y Registrar Bien</button>
+    </form>
+</body>
+</html>
