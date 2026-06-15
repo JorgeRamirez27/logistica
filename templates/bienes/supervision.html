@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2 class="mb-4 text-danger">Panel de Supervisión General</h2>
+
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-hover mb-0">
+        <thead class="table-danger">
+            <tr>
+                <th>Propietario (Cliente)</th>
+                <th>ID Bien</th>
+                <th>Descripción</th>
+                <th>Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bien in bienes %}
+            <tr>
+                <td>{{ bien.cliente.correo }}</td>
+                <td>{{ bien.identificador }}</td>
+                <td>{{ bien.descripcion }}</td>
+                <td>{{ bien.estatus }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

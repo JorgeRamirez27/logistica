@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Panel de Control Principal</h2>
+<div class="row">
+    {% if is_supervisor %}
+    <div class="col-md-6 mb-3">
+        <div class="card border-danger shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Supervisión Global</h5>
+                <p class="card-text">Consulta general de todos los bienes registrados en el sistema.</p>
+                <a href="{% url 'bienes:supervision_general' %}" class="btn btn-outline-danger">Ir a Supervisión</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card border-dark shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title text-dark">Bitácora y No Repudio</h5>
+                <p class="card-text">Audita los eventos inmutables, accesos y actividad del GPS.</p>
+                <a href="{% url 'bienes:consulta_bitacora' %}" class="btn btn-dark">Consultar Auditoría</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-md-6 mb-3">
+        <div class="card border-success shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">Registrar Bienes</h5>
+                <p class="card-text">Captura de bienes con direcciones de recolección y entrega.</p>
+                <a href="{% url 'bienes:registrar_bien' %}" class="btn btn-success">Nuevo Registro</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-3">
+        <div class="card border-primary shadow-sm h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title text-primary">Mis Reportes</h5>
+                <p class="card-text">Consulta y actualización de tu información logística propia.</p>
+                <a href="{% url 'bienes:lista_bienes' %}" class="btn btn-outline-primary">Ver Mis Bienes</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

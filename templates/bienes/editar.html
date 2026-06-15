@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg mx-auto border-0" style="max-width: 650px; border-radius: 15px;">
+        <div class="card-header bg-warning text-dark text-center py-4" style="border-radius: 15px 15px 0 0;">
+            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Actualizar Bien: {{ bien.identificador }}</h4>
+            <p class="mb-0 opacity-75 small">Modifica los datos necesarios</p>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{{ field.label }}</label>
+
+                    {# Aplicamos Bootstrap con widget_tweaks #}
+                    {{ field|add_class:"form-control" }}
+
+                    {% if field.help_text %}
+                    <small class="text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="d-grid mt-4 gap-2">
+                    <button type="submit" class="btn btn-warning btn-lg shadow-sm text-dark fw-bold">
+                        Guardar Cambios
+                    </button>
+                    <a href="{% url 'bienes:lista_bienes' %}" class="btn btn-outline-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ra0s9asv@-c*55(-j0mgbs2esiuti#o(#j2pbebg49=#+2%4$k'
+SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-ra0s9asv@-c*55(-j0mgbs2esiuti#o(#j2pbebg49=#+2%4$k')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG') == 'True'
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +40,21 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    #librerias cargadas
+    'rest_framework',
+    #libreria para el gps
+    'rest_framework.authtoken', 
+    
+    #capa de seguridad
+    'seguridad',
+    
+    #capa de dominio / aplicaciones
+    'apps.bienes',
+    'apps.clientes',
+    'apps.gps',
+    
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +72,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -115,3 +133,27 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CONTROLES DE SEGURIDAD DE SESIONES Y CSRF
+# Mitigación contra secuestro de sesión y robo de cookies mediante JavaScript (XSS)
+SESSION_COOKIE_HTTPONLY = True 
+CSRF_COOKIE_HTTPONLY = True
+
+# Tiempo de expiración de sesión (1800 segundos = 30 minutos) 
+SESSION_COOKIE_AGE = 1800 
+
+# Cierra la sesión activa al cerrar el navegador 
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # Le decimos a la API que confíe en los Tokens de seguridad
+        'rest_framework.authentication.TokenAuthentication',
+        # Mantenemos la sesión para cuando pruebes la API desde el navegador
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+}

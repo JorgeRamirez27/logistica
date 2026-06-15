@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="p-5 mb-4 bg-light rounded-3 shadow-sm">
+        <div class="container-fluid py-5">
+            <h1 class="display-3 fw-bold text-primary">Logística Segura UV</h1>
+            <p class="col-md-8 fs-4 mx-auto mt-3">
+                Plataforma integral de gestión logística, trazabilidad de bienes y supervisión en tiempo real.
+                Seguridad, eficiencia y control inmutable para operaciones de transporte.
+            </p>
+            <div class="mt-4">
+                <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Acceder al Sistema</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-md-stretch mt-5">
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+                <h3>Trazabilidad Total</h3>
+                <p>Monitoreo inmutable de cada bien mediante sistemas de bitácora auditables.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+                <h3>Seguridad Robusta</h3>
+                <p>Protección contra ataques OWASP y gestión estricta de roles (RBAC).</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="h-100 p-5 bg-white border rounded-3 shadow-sm">
+                <h3>GPS en Tiempo Real</h3>
+                <p>Integración segura con dispositivos de rastreo mediante APIs cifradas.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

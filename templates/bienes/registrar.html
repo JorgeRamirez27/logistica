@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg mx-auto border-0" style="max-width: 650px; border-radius: 15px;">
+        <div class="card-header bg-primary text-white text-center py-4" style="border-radius: 15px 15px 0 0;">
+            <h4 class="mb-0">Nuevo Registro de Bien</h4>
+        </div>
+        <div class="card-body p-4">
+            <form method="POST" action="{% url 'bienes:registrar_bien' %}">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{{ field.label }}</label>
+
+                    {# Aplicamos el filtro de widget_tweaks #}
+                    {{ field|add_class:"form-control" }}
+
+                    {% if field.help_text %}
+                    <small class="text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+
+                    {% if field.errors %}
+                    <div class="text-danger small">{{ field.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %} {# <-- Asegúrate de que este endfor esté presente #} <div class="d-grid mt-4 gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                        Registrar Bien de Forma Segura
+                    </button>
+                    <a href="{% url 'bienes:lista_bienes' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+        </form>
+    </div>
+</div>
+</div>
+{% endblock content %}

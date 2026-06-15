@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Mis Bienes Registrados</h2>
+    <a href="{% url 'bienes:registrar_bien' %}" class="btn btn-success">+ Registrar Nuevo</a>
+</div>
+
+<div class="table-responsive bg-white shadow-sm rounded">
+    <table class="table table-hover mb-0">
+        <thead class="table-dark">
+            <tr>
+                <th>Identificador</th>
+                <th>Descripción</th>
+                <th>Marca</th>
+                <th>Valor</th>
+                <th>Estatus</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bien in bienes %}
+            <tr>
+                <td><strong>{{ bien.identificador }}</strong></td>
+                <td>{{ bien.descripcion }}</td>
+                <td>{{ bien.marca }}</td>
+                <td>${{ bien.valor }}</td>
+                <td><span class="badge bg-info text-dark">{{ bien.estatus }}</span></td>
+                <td>
+                    <a href="{% url 'bienes:editar_bien' bien.pk %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-4 text-muted">No tienes bienes registrados en el sistema.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
