@@ -1,15 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4 text-danger">Panel de Supervisión General</h2>
+<h2 class="mb-4 text-danger"><i class="bi bi-shield-check"></i> Panel de Supervisión General</h2>
 
 <div class="table-responsive bg-white shadow-sm rounded">
-    <table class="table table-hover mb-0">
+    <table class="table table-hover mb-0 align-middle">
         <thead class="table-danger">
             <tr>
                 <th>Propietario (Cliente)</th>
                 <th>ID Bien</th>
                 <th>Descripción</th>
+                <th>Placa del Camión</th>
+                <th>Origen ➔ Destino</th>
+                <th>Última Coordenada (GPS)</th>
                 <th>Estatus</th>
             </tr>
         </thead>
@@ -17,9 +20,45 @@
             {% for bien in bienes %}
             <tr>
                 <td>{{ bien.cliente.correo }}</td>
-                <td>{{ bien.identificador }}</td>
+                <td class="fw-bold">{{ bien.identificador }}</td>
                 <td>{{ bien.descripcion }}</td>
-                <td>{{ bien.estatus }}</td>
+
+                <td><span class="badge bg-dark">{{ bien.placa|default:"SIN PLACA" }}</span></td>
+
+                <td>
+                    {% if bien.viaje_activo %}
+                    <span class="text-success fw-bold">{{ bien.viaje_activo.origen }}</span>
+                    ➔
+                    <span class="text-primary fw-bold">{{ bien.viaje_activo.destino }}</span>
+                    {% else %}
+                    <span class="text-muted fst-italic">Sin viaje activo</span>
+                    {% endif %}
+                </td>
+
+                <td> {% if bien.ultima_posicion %}
+                    <code
+                        class="text-primary fs-6">{{ bien.ultima_posicion.latitud }}, {{ bien.ultima_posicion.longitud }}</code>
+                    <span class="d-block text-muted small">
+                        <i class="bi bi-clock"></i> {{ bien.ultima_posicion.fecha_hora|date:"d/m/Y H:i:s" }}
+                    </span>
+                    {% else %}
+                    <span class="text-danger small"><i class="bi bi-exclamation-circle"></i> Sin señal GPS</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    <span
+                        class="badge {% if bien.estatus == 'REGISTRADO' %}bg-secondary{% elif bien.estatus == 'EN_TRANSITO' %}bg-success{% else %}bg-primary{% endif %}">
+                        {{ bien.estatus }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center text-muted py-5">
+                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                    No hay bienes registrados en el sistema actualmente.
+                </td>
             </tr>
             {% endfor %}
         </tbody>

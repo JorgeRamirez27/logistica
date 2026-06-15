@@ -29,7 +29,13 @@ class Cliente(models.Model):
     def __str__(self):
         return f"{self.identificador} - {self.nombre} {self.apellido_paterno}"
 
+
 class Direccion(models.Model):
+    # ==========================================
+    # RELACIÓN AÑADIDA: Vinculación estricta al propietario
+    # ==========================================
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='direcciones')
+
     TIPO_CHOICES = [
         ('ORIGEN', 'Origen / Recolección'),
         ('DESTINO', 'Destino / Entrega'),

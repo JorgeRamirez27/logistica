@@ -17,20 +17,20 @@ class Camion(models.Model):
 
 class ActualizacionGPS(models.Model):
     """Registro inmutable de la ubicación de un camión en un momento dado."""
-    camion = models.ForeignKey(Camion, on_delete=models.CASCADE, related_name='rutas')
+    placa_camion = models.CharField(max_length=8) 
     
-    # Validación geográfica estricta para latitud (-90 a 90) y longitud (-180 a 180)
     latitud = models.DecimalField(
-        max_digits=9, decimal_places=6,
+        max_digits=9, 
+        decimal_places=6,
         validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)]
     )
     longitud = models.DecimalField(
-        max_digits=10, decimal_places=6,
+        max_digits=10, 
+        decimal_places=6,
         validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)]
     )
     
-    # Este campo genera el timestamp automático de la simulación
     fecha_hora = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.camion.placa} -> {self.latitud}, {self.longitud}"
+        return f"{self.placa_camion} -> {self.latitud}, {self.longitud}"

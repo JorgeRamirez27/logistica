@@ -4,40 +4,28 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ActualizacionGPSSerializer
 from seguridad.models import Bitacora
+from apps.bienes.models import Bien # IMPORTANTE: Importa tu modelo Bien
 
 class RecepcionGPSView(APIView):
-    """
-    Entry Point Externo: API para recibir coordenadas.
-    Control OWASP: Autenticación obligatoria por Token.
-    """
-    permission_classes = [IsAuthenticated] # Bloquea acceso sin Token
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = ActualizacionGPSSerializer(data=request.data)
         
         if serializer.is_valid():
-            gps_record = serializer.save()
+            gps_record = serializer.save() # ¡Aquí se crea el objeto con el camion ya asignado!
             
-            # Auditoría: Registramos el evento exitoso
+            # Auditoría
             Bitacora.objects.create(
                 usuario=request.user,
                 nombre_usuario=request.user.username,
                 rol="Sistema Camión",
                 accion="Actualización GPS",
                 resultado="EXITOSO",
-                descripcion=f"Coordenadas recibidas para el camión {gps_record.camion.placa}",
+                descripcion=f"Coordenadas recibidas para el camión {gps_record.placa_camion}",
                 direccion_ip=request.META.get('REMOTE_ADDR', '0.0.0.0')
             )
             return Response({"mensaje": "Ubicación registrada de forma segura."}, status=status.HTTP_201_CREATED)
         
-        # Auditoría: Registramos el intento fallido
-        Bitacora.objects.create(
-            usuario=request.user,
-            nombre_usuario=request.user.username,
-            rol="Sistema Camión",
-            accion="Actualización GPS",
-            resultado="RECHAZADO",
-            descripcion="Intento de inyección de coordenadas con formato inválido.",
-            direccion_ip=request.META.get('REMOTE_ADDR', '0.0.0.0')
-        )
+        # Si el serializador falla, devuelve los errores automáticamente (ej: "Camión no encontrado")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

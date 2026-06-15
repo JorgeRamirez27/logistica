@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
 from seguridad import views as seguridad_views
+from apps.clientes import views as clientes_views
 
 urlpatterns = [
     # --- Landing Page (Raíz del sitio) ---
@@ -37,4 +38,6 @@ urlpatterns = [
     
     # --- API Auth ---
     path('api/token-auth/', obtain_auth_token, name='api_token_auth'),
+    #path('clientes/direcciones/registrar/', clientes_views.registrar_direccion, name='registrar_direccion'),
+    path('clientes/', include('apps.clientes.urls')),
 ]

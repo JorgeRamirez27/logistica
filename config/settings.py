@@ -157,3 +157,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
 }
+
+# Habilitamos nuestro validador personalizado y mantenemos el de Django como respaldo
+AUTHENTICATION_BACKENDS = [
+    'seguridad.backends.IdentificadorClienteBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

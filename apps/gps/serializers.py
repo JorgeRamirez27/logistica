@@ -1,20 +1,14 @@
+from apps.bienes.models import Bien
 from rest_framework import serializers
 from .models import ActualizacionGPS, Camion
 
 class ActualizacionGPSSerializer(serializers.ModelSerializer):
-    placa_camion = serializers.CharField(write_only=True)
-
     class Meta:
         model = ActualizacionGPS
-        fields = ['placa_camion', 'latitud', 'longitud', 'fecha_hora']
-        read_only_fields = ['fecha_hora']
+        fields = ['placa_camion', 'latitud', 'longitud']
 
-    def validate(self, data):
-        """Sanitización y validación personalizada para la API"""
-        placa = data.pop('placa_camion').upper().strip()
-        try:
-            camion = Camion.objects.get(placa=placa)
-            data['camion'] = camion
-        except Camion.DoesNotExist:
-            raise serializers.ValidationError({"placa_camion": "Camión no encontrado o no registrado."})
-        return data
+    def validate_placa_camion(self, value):
+        # Validar que esta placa exista en la tabla Bienes
+        if not Bien.objects.filter(placa=value.upper().strip()).exists():
+            raise serializers.ValidationError("No existe un camión registrado con esta placa.")
+        return value.upper().strip()

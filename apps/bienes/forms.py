@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.html import escape
 from .models import Bien
+from apps.clientes.models import Direccion  # Asegúrate de importar el modelo Direccion
 
 class BienForm(forms.ModelForm):
     class Meta:
@@ -16,6 +17,27 @@ class BienForm(forms.ModelForm):
         widgets = {
             'descripcion': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Describe el bien detalladamente...'}),
         }
+
+    # ==========================================
+    # AISLAMIENTO DE DATOS (AGENDA PRIVADA)
+    # ==========================================
+    def __init__(self, *args, **kwargs):
+        # 1. Extraemos el cliente antes de inicializar el formulario base
+        cliente_perfil = kwargs.pop('cliente', None)
+        super(BienForm, self).__init__(*args, **kwargs)
+        
+        # 2. Filtro hermético: Solo mostramos las direcciones del cliente logueado
+        if cliente_perfil:
+            self.fields['direccion_recoleccion'].queryset = Direccion.objects.filter(
+                cliente=cliente_perfil
+            )
+            self.fields['direccion_entrega'].queryset = Direccion.objects.filter(
+                cliente=cliente_perfil
+            )
+            
+            # Mejoramos la experiencia de usuario con placeholders claros
+            self.fields['direccion_recoleccion'].empty_label = "Seleccione un origen de su agenda..."
+            self.fields['direccion_entrega'].empty_label = "Seleccione un destino de su agenda..."
 
     # ==========================================
     # SANITIZACIÓN Y VALIDACIÓN (OWASP)
