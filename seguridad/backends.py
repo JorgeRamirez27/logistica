@@ -18,6 +18,9 @@ class IdentificadorClienteBackend(ModelBackend):
                 user = User.objects.get(email=cliente.correo)
             except User.DoesNotExist:
                 return None
+            except User.MultipleObjectsReturned:
+                # Si hay más de un usuario con el mismo correo, tomamos el primero
+                user = User.objects.filter(email=cliente.correo).first()
                 
         except Cliente.DoesNotExist:
             # 3. Si no es un cliente, intentamos buscarlo como un usuario normal (Admin/Supervisor)
