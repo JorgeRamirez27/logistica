@@ -13,13 +13,12 @@ class IdentificadorClienteBackend(ModelBackend):
             # 1. Buscamos si lo que ingresó el usuario es un identificador logístico
             cliente = Cliente.objects.get(identificador=username)
             
-            # 2. Obtenemos el usuario de Django buscando el correo asociado a ese cliente
+            # 2. Obtenemos el usuario vinculado a este cliente. 
+            # Como el signal usa el identificador como username, buscamos por eso:
             try:
-                user = User.objects.get(email=cliente.correo)
+                user = User.objects.get(username=cliente.identificador)
             except User.DoesNotExist:
-                return None
-            except User.MultipleObjectsReturned:
-                # Si hay más de un usuario con el mismo correo, tomamos el primero
+                # Fallback por si el usuario es antiguo y solo estaba vinculado por correo
                 user = User.objects.filter(email=cliente.correo).first()
                 
         except Cliente.DoesNotExist:

@@ -5,14 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import ActualizacionGPSSerializer
 from seguridad.models import Bitacora
 from seguridad.views import obtener_ip
-from apps.bienes.models import Bien # IMPORTANTE: Importa tu modelo Bien
+from apps.bienes.models import Bien 
 from rest_framework.exceptions import NotAuthenticated, AuthenticationFailed
 
 class RecepcionGPSView(APIView):
     permission_classes = [IsAuthenticated]
 
     def handle_exception(self, exc):
-        # Interceptamos errores de autenticación (Token inválido o ausente) antes de que DRF los devuelva
+        
         if isinstance(exc, (NotAuthenticated, AuthenticationFailed)):
             Bitacora.objects.create(
                 usuario=None,
@@ -29,7 +29,7 @@ class RecepcionGPSView(APIView):
         serializer = ActualizacionGPSSerializer(data=request.data)
         
         if serializer.is_valid():
-            gps_record = serializer.save() # ¡Aquí se crea el objeto con el camion ya asignado!
+            gps_record = serializer.save()
             
             # Auditoría
             Bitacora.objects.create(
@@ -43,7 +43,6 @@ class RecepcionGPSView(APIView):
             )
             return Response({"mensaje": "Ubicación registrada de forma segura."}, status=status.HTTP_201_CREATED)
         
-        # Si el serializador falla, formateamos y registramos los errores (ej. "Camión no encontrado")
         placa_enviada = request.data.get('placa_camion', request.data.get('placa', 'Desconocida'))
         errores_detalle = ", ".join([f"{k}: {v[0]}" for k, v in serializer.errors.items()])
         

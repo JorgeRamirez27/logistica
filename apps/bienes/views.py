@@ -49,7 +49,7 @@ def lista_bienes(request):
         raise PermissionDenied("No tienes permisos para ver esta sección.")
 
     try:
-        cliente_perfil = Cliente.objects.get(correo=request.user.email)
+        cliente_perfil = Cliente.objects.get(identificador=request.user.username)
         bienes = Bien.objects.filter(cliente=cliente_perfil)
     except Cliente.DoesNotExist:
         bienes = Bien.objects.none()
@@ -68,7 +68,7 @@ def registrar_bien(request):
         raise PermissionDenied("Acceso denegado.")
 
     try:
-        cliente_perfil = Cliente.objects.get(correo=request.user.email)
+        cliente_perfil = Cliente.objects.get(identificador=request.user.username)
     except Cliente.DoesNotExist:
         registrar_en_bitacora(request, "Alta de bien", "ERROR", f"El usuario '{request.user.username}' no posee un perfil de Cliente.")
         raise PermissionDenied("Tu cuenta de usuario no está vinculada a un perfil logístico de Cliente.")
@@ -99,7 +99,7 @@ def editar_bien(request, pk):
     Control: Mitigación de IDOR forzando el parámetro 'cliente' en la búsqueda del objeto.
     """
     try:
-        cliente_perfil = Cliente.objects.get(correo=request.user.email)
+        cliente_perfil = Cliente.objects.get(identificador=request.user.username)
         bien = get_object_or_404(Bien, pk=pk, cliente=cliente_perfil)
     except Cliente.DoesNotExist:
         registrar_en_bitacora(request, "Actualización de bienes", "RECHAZADO", f"Intento de alteración de bien ID {pk} por usuario sin perfil válido.")
